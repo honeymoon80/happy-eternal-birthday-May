@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🎂 Feliz Cumpleaños May 💗</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;1,400;1,600&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ========== CONFETI GLOBAL ========== -->
+<div id="confettiContainer"></div>
+
+<!-- ========== CANVAS PARTÍCULAS ========== -->
+<canvas id="particlesCanvas"></canvas>
+
+<!-- ========== NOTIFICACIÓN GLOBAL ========== -->
+<div id="globalNotif" class="global-notif"></div>
+
+<!-- ========== PANTALLA REGALO INICIAL ========== -->
+<div id="giftScreen" class="gift-screen">
+  <div class="gift-bg-deco">
+    <span class="g-deco" style="top:5%;left:5%">🎀</span>
+    <span class="g-deco" style="top:5%;right:5%">🎀</span>
+    <span class="g-deco" style="top:10%;left:20%">🌸</span>
+    <span class="g-deco" style="top:10%;right:20%">🌸</span>
+    <span class="g-deco" style="bottom:15%;left:8%">💗</span>
+    <span class="g-deco" style="bottom:15%;right:8%">💕</span>
+    <span class="g-deco" style="bottom:8%;left:35%">✨</span>
+    <span class="g-deco" style="bottom:8%;right:35%">⭐</span>
+    <span class="g-deco" style="top:45%;left:2%">🦋</span>
+    <span class="g-deco" style="top:45%;right:2%">🦋</span>
+  </div>
+
+  <div class="gift-card">
+    <div class="gift-title-wrap">
+      <span class="gift-emoji-title">🎂</span>
+      <h1 class="gift-main-title">¡Feliz Cumpleaños,<br>mi amor! 🎂</h1>
+      <p class="gift-subtitle">Aprieta el regalo para abrirlo... 💝</p>
+    </div>
+
+    <!-- El regalo / pastel clickeable -->
+    <div class="gift-box-wrap" id="giftBox">
+      <div class="gift-cake-art">
+        <div class="cake-tier cake-top">
+          <div class="cake-candles">
+            <div class="candle"><div class="flame"></div></div>
+            <div class="candle"><div class="flame"></div></div>
+            <div class="candle"><div class="flame"></div></div>
+          </div>
+          <div class="cake-deco-top">🌸 ❤️ 🌸</div>
+        </div>
+        <div class="cake-tier cake-mid">
+          <span class="cake-text">May 💗</span>
+        </div>
+        <div class="cake-tier cake-bottom">
+          <div class="cake-hearts">💕 💗 💕</div>
+        </div>
+        <div class="cake-plate"></div>
+      </div>
+      <div class="gift-click-hint">¡Tócame! 💝</div>
+    </div>
+
+    <!-- Barra de progreso de clics -->
+    <div class="gift-progress-wrap">
+      <div class="gift-progress-label" id="giftClickLabel">¡Ya casi! 0 / 20 clics</div>
+      <div class="gift-progress-outer">
+        <div class="gift-progress-inner" id="giftProgressBar" style="width:0%"></div>
+        <div class="gift-progress-hearts">💗💗💗💗💗💗💗💗💗💗</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PORTAFOLIO PRINCIPAL ========== -->
+<div id="mainApp" class="main-app hidden">
+
+  <!-- Adornos decorativos de fondo -->
+  <div class="bg-deco-layer" id="bgDecoLayer">
+    <span class="deco-float clickable-deco bow-deco" style="top:4%;left:2%">🎀</span>
+    <span class="deco-float clickable-deco bow-deco" style="top:4%;right:2%">🎀</span>
+    <span class="deco-float clickable-deco flower-deco" style="top:12%;left:7%">🌸</span>
+    <span class="deco-float clickable-deco flower-deco" style="top:12%;right:7%">🌺</span>
+    <span class="deco-float clickable-deco butterfly-deco" style="top:22%;left:1%">🦋</span>
+    <span class="deco-float clickable-deco butterfly-deco" style="top:22%;right:1%">🦋</span>
+    <span class="deco-float clickable-deco heart-deco" style="top:35%;left:3%">💗</span>
+    <span class="deco-float clickable-deco heart-deco" style="top:35%;right:3%">💖</span>
+    <span class="deco-float clickable-deco star-deco" style="top:50%;left:1%">⭐</span>
+    <span class="deco-float clickable-deco star-deco" style="top:50%;right:1%">✨</span>
+    <span class="deco-float clickable-deco cherry-deco" style="top:65%;left:4%">🍒</span>
+    <span class="deco-float clickable-deco cherry-deco" style="top:65%;right:4%">🍒</span>
+    <span class="deco-float clickable-deco flower-deco" style="top:78%;left:2%">🌷</span>
+    <span class="deco-float clickable-deco heart-deco" style="top:78%;right:2%">💕</span>
+    <span class="deco-float clickable-deco bow-deco" style="top:88%;left:6%">🎀</span>
+    <span class="deco-float clickable-deco bow-deco" style="top:88%;right:6%">🎀</span>
+  </div>
+
+  <!-- BARRA SUPERIOR DE PROGRESO GLOBAL -->
+  <div class="global-progress-bar" id="globalProgressBar">
+    <div class="gp-left">
+      <span class="gp-icon">💗</span>
+      <span class="gp-text" id="gpText">0/12 secciones</span>
+    </div>
+    <div class="gp-bar-outer">
+      <div class="gp-bar-inner" id="gpBarInner" style="width:0%"></div>
+    </div>
+    <span class="gp-pct" id="gpPct">0%</span>
+  </div>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-decos">🌸🎀🌸</div>
+    <div class="header-center">
+      <h1 class="app-title">💗 Para ti, mi niñita helmoshita 💗</h1>
+      <p class="app-subtitle">✨ FELIZ CUMPLEAÑOS MI AMOR ETERNO MAY (≧▽≦) ✨</p>
+    </div>
+    <div class="header-decos">🌸🎀🌸</div>
+  </header>
+
+  <!-- REPRODUCTOR GLOBAL (siempre visible) -->
+  <div class="global-player" id="globalPlayer">
+    <button class="gp-toggle" id="gpToggleBtn" title="Mostrar/ocultar">🎵</button>
+    <div class="gp-mini" id="gpMini">
+      <div class="gp-mini-info">
+        <span class="gp-mini-note">♪</span>
+        <span class="gp-mini-name" id="gpMiniName">Mi canción ♪</span>
+      </div>
+      <div class="gp-mini-controls">
+        <button class="gp-btn" id="gpPrevBtn">⏮</button>
+        <button class="gp-btn gp-play" id="gpPlayBtn">▶</button>
+        <button class="gp-btn" id="gpNextBtn">⏭</button>
+      </div>
+      <div class="gp-mini-progress">
+        <div class="gp-progress-track" id="gpProgressTrack">
+          <div class="gp-progress-fill" id="gpProgressFill"></div>
+          <div class="gp-progress-thumb" id="gpProgressThumb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <audio id="globalAudio"></audio>
+
+  <!-- MENÚ PRINCIPAL (12+1 tarjetas) -->
+  <div class="menu-section" id="menuSection">
+    <div class="menu-title-wrap">
+      <h2 class="menu-title">🎀 Tu regalo especial 🎀</h2>
+      <p class="menu-subtitle">Explora cada sección con todo mi amor 💕</p>
+    </div>
+    <div class="menu-grid" id="menuGrid">
+      <!-- Las tarjetas se generan desde JS con OPCIONES_MENU[] -->
+    </div>
+  </div>
+
+  <!-- ============================
+       SECCIONES (se muestran/ocultan)
+       ============================ -->
+
+  <!-- SECCIÓN 1: CARTA ROMÁNTICA (CARRUSEL) -->
+  <section class="sec-panel hidden" id="sec1">
+    <div class="sec-header">
+      <button class="back-btn" data-sec="1">← Volver al menú</button>
+      <h2 class="sec-title">💌 Carta Romántica 💌</h2>
+      <div class="sec-achievement-btn" id="achBtn1" onclick="toggleAchPanel(1)">🏆 Logros</div>
+    </div>
+    <div class="ach-panel hidden" id="achPanel1"></div>
+
+    <!-- Carrusel de imágenes carta -->
+    <div class="carousel-wrap">
+      <button class="nav-btn prev-btn" id="cartaPrev">❮</button>
+      <div class="carousel-viewport" id="cartaCarousel">
+        <!-- Slides generados por JS -->
+      </div>
+      <button class="nav-btn next-btn" id="cartaNext">❯</button>
+    </div>
+    <div class="carousel-progress">
+      <span id="cartaProgressText">Imagen 1 de 5 💗</span>
+      <div class="cp-bar-outer"><div class="cp-bar-inner" id="cartaProgressBar"></div></div>
+    </div>
+    <div class="carousel-dots" id="cartaDots"></div>
+  </section>
+
+  <!-- SECCIÓN 2: PLAYLIST (vista expandida) -->
+  <section class="sec-panel hidden" id="sec2">
+    <div class="sec-header">
+      <button class="back-btn" data-sec="2">← Volver al menú</button>
+      <h2 class="sec-title">🎵 Playlist Musical 🎵</h2>
+      <div class="sec-achievement-btn" id="achBtn2" onclick="toggleAchPanel(2)">🏆 Logros</div>
+    </div>
+    <div class="ach-panel hidden" id="achPanel2"></div>
+
+    <div class="playlist-expanded">
+      <div class="pl-album-art" id="plAlbumArt">
+        <div class="pl-album-placeholder">🎵</div>
+      </div>
+      <div class="pl-info">
+        <div class="pl-song-name" id="plSongName">♪ Mi canción para ti ♪</div>
+        <div class="pl-song-num" id="plSongNum">1 / 10</div>
+        <div class="pl-letra" id="plLetra">Eres mi razón de ser...</div>
+      </div>
+      <div class="pl-progress-row">
+        <span class="pl-time" id="plCurTime">0:00</span>
+        <div class="pl-progress-track" id="plProgressTrack">
+          <div class="pl-progress-fill" id="plProgressFill"></div>
+          <div class="pl-progress-thumb" id="plProgressThumb"></div>
+        </div>
+        <span class="pl-time" id="plTotalTime">0:00</span>
+      </div>
+      <div class="pl-controls">
+        <button class="pl-btn" id="plPrevBtn">⏮</button>
+        <button class="pl-btn pl-play-big" id="plPlayBtn">▶</button>
+        <button class="pl-btn" id="plNextBtn">⏭</button>
+      </div>
+      <div class="pl-volume-row">
+        <span>🔈</span>
+        <input type="range" id="plVolSlider" class="pl-vol-slider" min="0" max="1" step="0.01" value="0.7">
+        <span>🔊</span>
+      </div>
+      <!-- Imágenes rotativas de la canción -->
+      <div class="pl-images-carousel" id="plImgCarousel">
+        <div class="pl-img-placeholder">💗 Imágenes de la canción 💗</div>
+      </div>
+      <!-- Lista de canciones -->
+      <div class="pl-song-list" id="plSongList"></div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 3: TEST DE AMOR -->
+  <section class="sec-panel hidden" id="sec3">
+    <div class="sec-header">
+      <button class="back-btn" data-sec="3">← Volver al menú</button>
+      <h2 class="sec-title">📝 ¿Cuánto me conoces? 💗</h2>
+      <div class="sec-achievement-btn" id="achBtn3" onclick="toggleAchPanel(3)">🏆 Logros</div>
+    </div>
+    <div class="ach-panel hidden" id="achPanel3"></div>
+    <div id="testContainer"></div>
+  </section>
+
+  <!-- SECCIÓN 4: JUEGO RPG -->
+  <section class="sec-panel hidden" id="sec4">
+    <div class="sec-header">
+      <button class="back-btn" data-sec="4">← Volver al menú</button>
+      <h2 class="sec-title">🎮 Juego RPG del Amor 🎮</h2>
+      <div class="sec-achievement-btn" id="achBtn4" onclick="toggleAchPanel(4)">🏆 Logros</div>
+    </div>
+    <div class="ach-panel hidden" id="achPanel4"></div>
+    <div id="rpgContainer"></div>
+  </section>
+
+  <!-- SECCIÓN 5: CARTA INTERACTIVA -->
+  <section class="sec-panel hidden" id="sec5">
+    <div class="sec-header">
+      <button class="back-btn" data-sec="5">← Volver al menú</button>
+      <h2 class="sec-title">💌 Carta Interactiva 💌</h2>
+      <div class="sec-achievement-btn" id="achBtn5" onclick="toggleAchPanel(5)">🏆 Logros</div>
+    </div>
+    <div class="ach-panel hidden" id="achPanel5"></div>
+    <div id="cartaInteractivaContainer"></div>
+  </section>
+
+  <!-- SECCIÓN 6: PAISAJE INTERACTIVO -->
+  <section class="sec-panel hidden" id="sec6">
+    <div class="sec-header">
+      <button class="back-btn" data-sec="6">← Volver al menú</button>
+      <h2 class="sec-title">🌸 Paisaje & Juegos 🌸</h2>
+      <div class="sec-achievement-btn" id="achBtn6" onclick="toggleAchPanel(6)">🏆 Logros</div>
+    </div>
+    <div class="ach-panel hidden" id="achPanel6"></div>
+    <div id="paisajeContainer"></div>
+  </section>
+
+  <!-- SECCIÓN 7: NUESTRO UNIVERSO -->
+  <section class="sec-panel hidden" id="sec7">
+    <div class="sec-header">
+      <button class="back-btn" data-sec="7">← Volver al menú</button>
+      <h2 class="sec-title">🌌 Nuestro Universo 🌌</h2>
+      <div class="sec-achievement-btn" id="achBtn7" onclick="toggleAchPanel(7)">🏆 Logros</div>
+    </div>
+    <div class="ach-panel hidden" id="achPanel7"></div>
+    <div id="universoContainer"></div>
+  </section>
+
+  <!-- SECCIÓN 8: JARDÍN SECRETO -->
+  <section class="sec-panel hidden" id="sec8">
+    <div class="sec-header">
+      <button class="back-btn" data-sec="8">← Volver al menú</button>
+      <h2 class="sec-title">🌻 Nuestro Jardín Secreto 🌻</h2>
+      <div class="sec-achievement-btn" id="achBtn8" onclick="toggleAchPanel(8)">🏆 Logros</div>
+    </div>
+    <div class="ach-panel hidden" id="achPanel8"></div>
+    <div id="jardinContainer"></div>
+  </section>
+
+  <!-- SECCIÓN 9: MAPA -->
+  <section class="sec-panel hidden" id="sec9">
+    <div class="sec-header">
+      <button class="back-btn" data-sec="9">← Volver al menú</button>
+      <h2 class="sec-title">🗺️ Mapa de Nuestro Amor 🗺️</h2>
+      <div class="sec-achievement-btn" id="achBtn9" onclick="toggleAchPanel(9)">🏆 Logros</div>
+    </div>
+    <div class="ach-panel hidden" id="achPanel9"></div>
+    <div id="mapaContainer"></div>
+  </section>
+
+  <!-- SECCIÓN 10: CAJA 3D -->
+  <section class="sec-panel hidden" id="sec10">
+    <div class="sec-header">
+      <button class="back-btn" data-sec="10">← Volver al menú</button>
+      <h2 class="sec-title">📦 Caja de Recuerdos 💝</h2>
+      <div class="sec-achievement-btn" id="achBtn10" onclick="toggleAchPanel(10)">🏆 Logros</div>
+    </div>
+    <div class="ach-panel hidden" id="achPanel10"></div>
+    <div id="caja3dContainer"></div>
+  </section>
+
+  <!-- SECCIÓN 11: PREGUNTAS DEL CORAZÓN -->
+  <section class="sec-panel hidden" id="sec11">
+    <div class="sec-header">
+      <button class="back-btn" data-sec="11">← Volver al menú</button>
+      <h2 class="sec-title">❤️ Preguntas del Corazón ❤️</h2>
+      <div class="sec-achievement-btn" id="achBtn11" onclick="toggleAchPanel(11)">🏆 Logros</div>
+    </div>
+    <div class="ach-panel hidden" id="achPanel11"></div>
+    <div id="preguntasContainer"></div>
+  </section>
+
+  <!-- SECCIÓN 12: CARTA INFINITA -->
+  <section class="sec-panel hidden" id="sec12">
+    <div class="sec-header">
+      <button class="back-btn" data-sec="12">← Volver al menú</button>
+      <h2 class="sec-title">📜 Carta que Nunca Termina 📜</h2>
+      <div class="sec-achievement-btn" id="achBtn12" onclick="toggleAchPanel(12)">🏆 Logros</div>
+    </div>
+    <div class="ach-panel hidden" id="achPanel12"></div>
+    <div id="cartaInfinitaContainer"></div>
+  </section>
+
+  <!-- SECCIÓN 13: ETERNO AMOR (bloqueada inicialmente) -->
+  <section class="sec-panel hidden" id="sec13">
+    <div class="sec-header sec13-header">
+      <button class="back-btn back-btn-gold" data-sec="13">← Volver al menú</button>
+      <h2 class="sec-title sec13-title">✨ ETERNO AMOR ✨</h2>
+    </div>
+    <div id="sec13Container"></div>
+  </section>
+
+</div><!-- /mainApp -->
+
+<!-- MODAL GENÉRICO -->
+<div id="genericModal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <button class="modal-close" id="modalCloseBtn">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

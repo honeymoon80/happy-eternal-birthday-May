@@ -4,28 +4,6 @@
 'use strict';
 
 // =============================================
-// 🚨 CORRECCIÓN DE ERRORES - DEBE IR AL PRINCIPIO
-// =============================================
-
-// Forzar que las funciones faltantes existan
-window.showNotif = window.showNotif || function(msg) { console.log(msg); };
-window.launchConfetti = window.launchConfetti || function() { console.log("confetti"); };
-window.launchFireworks = window.launchFireworks || function() { console.log("fireworks"); };
-window.openModal = window.openModal || function(html) { alert(html); };
-window.closeModal = window.closeModal || function() {};
-window.spawnParticles = window.spawnParticles || function() {};
-window.startFloatingHearts = window.startFloatingHearts || function() {};
-window.initMusic = window.initMusic || function() {};
-window.updateGlobalProgressUI = window.updateGlobalProgressUI || function() {};
-window.toggleAchPanel = window.toggleAchPanel || function() {};
-window.renderAchPanel = window.renderAchPanel || function() {};
-
-// Forzar que achievements exista
-if (typeof achievements === 'undefined') window.achievements = {};
-
-console.log("✅ Correcciones aplicadas");
-
-// =============================================
 // ⚙️ CONFIGURACIÓN PERSONALIZABLE — EDITA AQUÍ
 // =============================================
 
@@ -2023,4 +2001,295 @@ function initSec13() {
     <div class="carousel-dots" id="sec13Dots"></div>
   </div>
   <!-- Contador eterno -->
-  <div class="sec-inner-wrap
+  <div class="sec-inner-wrap">
+    <div style="text-align:center;margin:20px 0 10px">
+      <div style="font-family:var(--font-script);font-size:1.1rem;color:var(--text-mid)">📅 Llevamos juntos...</div>
+    </div>
+    <div class="eternal-counter" id="eternalCounter"></div>
+  </div>
+  <!-- Adornos interactivos -->
+  <div class="sec13-adorns" id="sec13Adorns"></div>
+  <!-- Mensaje final -->
+  <div class="sec-inner-wrap"><div class="sec13-msg"><div class="sec13-msg-text" id="sec13MsgText">Cargando mensaje de amor...</div></div>
+  <div style="text-align:center;margin-top:12px">
+    <button class="sec13-download-btn" id="sec13DownloadBtn">📸 Descargar certificado 💗</button>
+  </div></div>
+  <!-- Certificado oculto -->
+  <div id="certDiv" style="display:none;padding:30px;text-align:center;background:linear-gradient(135deg,#fff8f4,#fde8f0);border:3px solid var(--gold-deep);border-radius:20px;margin:16px">
+    <div style="font-family:var(--font-vibes);font-size:2.5rem;color:var(--gold-deep)">${CERTIFICADO_TITULO}</div>
+    <div style="font-family:var(--font-script);font-size:1rem;color:var(--text-mid);margin:10px 0">${CERTIFICADO_MENSAJE}</div>
+    <div style="font-family:var(--font-vibes);font-size:1.5rem;color:var(--pink-dark)" id="certCounter"></div>
+    <div style="font-family:var(--font-script);font-size:0.9rem;color:var(--text-light);margin-top:8px">Fecha: ${new Date().toLocaleDateString()}</div>
+  </div>`;
+  // Construir carrusel sec13
+  const carousel=document.getElementById('sec13Carousel');
+  if(carousel&&!carousel.children.length){
+    IMGS_SEC13.forEach((src,i)=>{
+      const s=document.createElement('div');
+      s.className='c-slide'+(i===0?' active':'');
+      s.innerHTML=`<div class="c-placeholder"><img src="${src}" alt="Imagen ${i+1}" loading="lazy" style="width:100%;height:100%;object-fit:contain" onerror="this.style.display='none'"><div class="c-slide-overlay">${FRASES_CARRUSEL_13[i]||''}</div></div>`;
+      carousel.appendChild(s);
+    });
+  }
+  // Dots sec13
+  const dotsEl=document.getElementById('sec13Dots');
+  if(dotsEl){dotsEl.innerHTML='';for(let i=0;i<TOTAL_SLIDES_SEC13;i++){const d=document.createElement('div');d.className='c-dot'+(i===0?' active':'');d.onclick=()=>goSec13Slide(i);dotsEl.appendChild(d);}}
+  // Botones carrusel
+  document.getElementById('sec13Prev').onclick=()=>goSec13Slide(sec13Slide-1);
+  document.getElementById('sec13Next').onclick=()=>goSec13Slide(sec13Slide+1);
+  // Contador eterno
+  setInterval(updateEternalCounter,1000); updateEternalCounter();
+  // Adornos interactivos
+  const adorns=document.getElementById('sec13Adorns');
+  if(adorns){
+    const icons=['💗','✨','🎀','💕','🌸','⭐','💖','🦋','🌺','💝'];
+    adorns.innerHTML=icons.map((ic,i)=>`<span class="sec13-adorn" style="left:${10+i*9}%;top:${Math.random()*60+10}%">${ic}</span>`).join('');
+    adorns.querySelectorAll('.sec13-adorn').forEach(el=>{
+      el.addEventListener('click',()=>{
+        const msg=FRASES_ADORNOS_FINAL[Math.floor(Math.random()*FRASES_ADORNOS_FINAL.length)];
+        showNotif(msg+' 💗');
+        spawnParticles(el.getBoundingClientRect().left+20,el.getBoundingClientRect().top,20,'big');
+        el.style.transform='scale(1.5) rotate(20deg)';
+        setTimeout(()=>el.style.transform='',400);
+      });
+    });
+  }
+  // Mensaje final
+  const msgEl=document.getElementById('sec13MsgText');
+  if(msgEl){
+    const diff=getEternalDiff();
+    const msg=MENSAJE_FINAL_LOGRO[Math.floor(Math.random()*MENSAJE_FINAL_LOGRO.length)]
+      .replace('{dias}',diff.days).replace('{meses}',diff.months).replace('{años}',diff.years);
+    msgEl.textContent=msg;
+  }
+  // Descarga certificado
+  document.getElementById('sec13DownloadBtn').addEventListener('click',()=>{
+    const certDiv=document.getElementById('certDiv');
+    certDiv.style.display='block';
+    const diff=getEternalDiff();
+    const cCounter=document.getElementById('certCounter');
+    if(cCounter) cCounter.textContent=`${diff.years} años, ${diff.months} meses y ${diff.days} días juntos 💗`;
+    setTimeout(()=>{
+      if(typeof html2canvas!=='undefined'){
+        html2canvas(certDiv).then(canvas=>{
+          const a=document.createElement('a');
+          a.download='certificado_amor_eterno.png';
+          a.href=canvas.toDataURL();
+          a.click();
+        });
+      } else {
+        // Fallback: texto
+        const data=`${CERTIFICADO_TITULO}\n${CERTIFICADO_MENSAJE}\n${diff.years} años, ${diff.months} meses y ${diff.days} días juntos\nFecha: ${new Date().toLocaleDateString()}`;
+        const blob=new Blob([data],{type:'text/plain'});
+        const a=document.createElement('a');
+        a.href=URL.createObjectURL(blob);
+        a.download='certificado_amor_eterno.txt';
+        a.click();
+      }
+    },300);
+  });
+  // Efecto de primera vez
+  if(!localStorage.getItem('sec13FirstShown')){
+    localStorage.setItem('sec13FirstShown','yes');
+    launchFireworks();
+  }
+}
+function goSec13Slide(idx) {
+  if(sec13Transitioning) return;
+  const total=TOTAL_SLIDES_SEC13;
+  if(idx<0) idx=total-1;
+  if(idx>=total) idx=0;
+  if(idx===sec13Slide) return;
+  sec13Transitioning=true;
+  const carousel=document.getElementById('sec13Carousel');
+  const slides=carousel?.querySelectorAll('.c-slide');
+  if(!slides){sec13Slide=idx;return;}
+  const t=TRANSITIONS_LIST[sec13TransIdx%TRANSITIONS_LIST.length];
+  sec13TransIdx++;
+  const old=slides[sec13Slide], nw=slides[idx];
+  old.classList.add(t.o);
+  nw.style.display='flex'; nw.classList.add(t.i,'active');
+  setTimeout(()=>{
+    old.style.display='none'; old.classList.remove('active',t.o);
+    nw.classList.remove(t.i);
+    sec13Slide=idx; sec13Transitioning=false;
+    document.querySelectorAll('#sec13Dots .c-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+    const pt=document.getElementById('sec13ProgText');
+    const pb=document.getElementById('sec13ProgBar');
+    if(pt) pt.textContent=`Imagen ${idx+1} de ${total} 💗`;
+    if(pb) pb.style.width=((idx+1)/total*100)+'%';
+  },550);
+}
+function getEternalDiff() {
+  const start=new Date(FECHA_INICIO_AMOR);
+  const now=new Date();
+  let years=now.getFullYear()-start.getFullYear();
+  let months=now.getMonth()-start.getMonth();
+  let days=now.getDate()-start.getDate();
+  if(days<0){months--;days+=new Date(now.getFullYear(),now.getMonth(),0).getDate();}
+  if(months<0){years--;months+=12;}
+  const totalDays=Math.floor((now-start)/(1000*60*60*24));
+  const hours=now.getHours(), mins=now.getMinutes(), secs=now.getSeconds();
+  return {years,months,days,hours,mins,secs,totalDays};
+}
+function updateEternalCounter() {
+  const el=document.getElementById('eternalCounter');
+  if (!el) return;
+  const d=getEternalDiff();
+  el.innerHTML=`
+    <div class="ec-unit"><div class="ec-num">${d.years}</div><div class="ec-label">🎂 Años</div></div>
+    <div class="ec-unit"><div class="ec-num">${d.months}</div><div class="ec-label">🌙 Meses</div></div>
+    <div class="ec-unit"><div class="ec-num">${d.days}</div><div class="ec-label">☀️ Días</div></div>
+    <div class="ec-unit"><div class="ec-num">${d.hours}</div><div class="ec-label">⏰ Horas</div></div>
+    <div class="ec-unit"><div class="ec-num">${d.mins}</div><div class="ec-label">⏱️ Minutos</div></div>
+    <div class="ec-unit"><div class="ec-num">${d.secs}</div><div class="ec-label">⏲️ Segundos</div></div>`;
+}
+
+// =============================================
+// MODAL GENÉRICO
+// =============================================
+function openModal(html) {
+  modalContent.innerHTML = html;
+  genericModal.classList.remove('hidden');
+}
+function closeModal() {
+  genericModal.classList.add('hidden');
+  modalContent.innerHTML = '';
+}
+
+// =============================================
+// PARTÍCULAS
+// =============================================
+function spawnParticles(x, y, count, type) {
+  if (particlePool.length >= MAX_PARTICLES) return;
+  const isBig = type==='big';
+  const items = isBig ? EMOJI_BIG : EMOJI_SMALL;
+  const words = isBig ? MAY_WORDS_BIG : MAY_WORDS_SMALL;
+  for (let i=0; i<count; i++) {
+    if (particlePool.length >= MAX_PARTICLES) break;
+    const el = document.createElement('div');
+    el.className = 'particle';
+    const useWord = Math.random() > 0.5;
+    if (useWord) {
+      el.textContent = words[Math.floor(Math.random()*words.length)];
+      el.style.fontSize = isBig ? (Math.random()*5+11)+'px' : (Math.random()*4+8)+'px';
+      el.style.color = ['#ff69b4','#ff1493','#db2777','#f9a8d4','#e879f9','#fde68a'][Math.floor(Math.random()*6)];
+      el.style.fontFamily = "'Dancing Script',cursive";
+      el.style.fontWeight = '600';
+    } else {
+      el.textContent = items[Math.floor(Math.random()*items.length)];
+      el.style.fontSize = isBig ? (Math.random()*12+16)+'px' : (Math.random()*8+10)+'px';
+    }
+    const angle = Math.random()*Math.PI*2;
+    const speed = isBig ? (Math.random()*80+60) : (Math.random()*50+30);
+    const vx = Math.cos(angle)*speed, vy = -Math.abs(Math.sin(angle))*speed-(isBig?60:40);
+    el.style.cssText += `;position:fixed;left:${x}px;top:${y}px;pointer-events:none;z-index:9500;`;
+    document.body.appendChild(el);
+    particlePool.push(el);
+    const start=performance.now(), gravity=80;
+    const dur=isBig?(Math.random()*1000+1800):(Math.random()*800+1200);
+    const anim=now=>{
+      const t=(now-start)/1000;
+      const nx=x+vx*t, ny=y+vy*t+0.5*gravity*t*t;
+      const op=Math.max(0,1-t/(dur/1000));
+      const sc=Math.max(0.1,1-t/(dur/1000)*0.7);
+      el.style.left=nx+'px'; el.style.top=ny+'px';
+      el.style.transform=`rotate(${t*(isBig?180:120)}deg) scale(${sc})`;
+      el.style.opacity=op;
+      if(t<dur/1000&&op>0) requestAnimationFrame(anim);
+      else { el.remove(); const i=particlePool.indexOf(el); if(i!==-1)particlePool.splice(i,1); }
+    };
+    requestAnimationFrame(anim);
+  }
+}
+
+// =============================================
+// CONFETI
+// =============================================
+function launchConfetti(count=80) {
+  const colors=['#ff69b4','#f9a8d4','#fda4af','#e9d5ff','#c4b5fd','#fde68a','#a7f3d0','#fbcfe8'];
+  for (let i=0; i<count; i++) {
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='confetti-piece';
+      el.style.left=Math.random()*100+'vw';
+      el.style.background=colors[Math.floor(Math.random()*colors.length)];
+      el.style.width=(Math.random()*10+5)+'px';
+      el.style.height=(Math.random()*10+5)+'px';
+      el.style.borderRadius=Math.random()>0.5?'50%':'3px';
+      el.style.animationDuration=(Math.random()*2+1.5)+'s';
+      el.style.animationDelay=Math.random()*0.5+'s';
+      confettiCont.appendChild(el);
+      setTimeout(()=>el.remove(),3500);
+    }, i*10);
+  }
+}
+
+// =============================================
+// FUEGOS ARTIFICIALES
+// =============================================
+function launchFireworks() {
+  const colors=['#ff69b4','#fbbf24','#a78bfa','#34d399','#f97316'];
+  for (let i=0; i<10; i++) {
+    setTimeout(()=>{
+      const x=Math.random()*window.innerWidth;
+      const y=Math.random()*window.innerHeight*0.6;
+      for(let j=0;j<20;j++){
+        const el=document.createElement('div');
+        el.style.cssText=`position:fixed;left:${x}px;top:${y}px;width:6px;height:6px;border-radius:50%;background:${colors[Math.floor(Math.random()*colors.length)]};pointer-events:none;z-index:9900;`;
+        document.body.appendChild(el);
+        const angle=Math.random()*Math.PI*2, speed=Math.random()*100+50;
+        const vx=Math.cos(angle)*speed, vy=Math.sin(angle)*speed;
+        const start=performance.now();
+        const anim=now=>{
+          const t=(now-start)/1000;
+          el.style.left=(x+vx*t)+'px';
+          el.style.top=(y+vy*t+0.5*200*t*t)+'px';
+          el.style.opacity=Math.max(0,1-t/1.5);
+          if(t<1.5) requestAnimationFrame(anim);
+          else el.remove();
+        };
+        requestAnimationFrame(anim);
+      }
+    }, i*300);
+  }
+}
+
+// =============================================
+// NOTIFICACIÓN
+// =============================================
+let notifTimeout = null;
+function showNotif(msg) {
+  globalNotif.textContent = msg;
+  globalNotif.classList.add('show');
+  clearTimeout(notifTimeout);
+  notifTimeout = setTimeout(()=>globalNotif.classList.remove('show'), 3500);
+}
+
+// =============================================
+// CORAZONES FLOTANTES
+// =============================================
+function startFloatingHearts() {
+  const hearts=['💗','💕','🌸','✨','💖','🎀','🌺'];
+  const spawn=()=>{
+    const el=document.createElement('div');
+    el.className='float-heart';
+    el.textContent=hearts[Math.floor(Math.random()*hearts.length)];
+    el.style.left=Math.random()*100+'vw';
+    el.style.animationDuration=(Math.random()*6+7)+'s';
+    el.style.fontSize=(Math.random()*14+12)+'px';
+    el.style.opacity=(Math.random()*0.35+0.2).toFixed(2);
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),14000);
+  };
+  for(let i=0;i<6;i++) setTimeout(spawn,i*500);
+  setInterval(spawn,800);
+}
+
+// =============================================
+// RESIZE
+// =============================================
+window.addEventListener('resize',()=>{
+  particlePool.forEach(p=>{if(!document.body.contains(p))p.remove();});
+  particlePool=particlePool.filter(p=>document.body.contains(p));
+});

@@ -1,7 +1,29 @@
-/* ============================================
+/* =============================================
    SCRIPT.JS - Página Romántica de Cumpleaños para May
    ============================================= */
 'use strict';
+
+// =============================================
+// 🚨 CORRECCIÓN DE ERRORES - DEBE IR AL PRINCIPIO
+// =============================================
+
+// Forzar que las funciones faltantes existan
+window.showNotif = window.showNotif || function(msg) { console.log(msg); };
+window.launchConfetti = window.launchConfetti || function() { console.log("confetti"); };
+window.launchFireworks = window.launchFireworks || function() { console.log("fireworks"); };
+window.openModal = window.openModal || function(html) { alert(html); };
+window.closeModal = window.closeModal || function() {};
+window.spawnParticles = window.spawnParticles || function() {};
+window.startFloatingHearts = window.startFloatingHearts || function() {};
+window.initMusic = window.initMusic || function() {};
+window.updateGlobalProgressUI = window.updateGlobalProgressUI || function() {};
+window.toggleAchPanel = window.toggleAchPanel || function() {};
+window.renderAchPanel = window.renderAchPanel || function() {};
+
+// Forzar que achievements exista
+if (typeof achievements === 'undefined') window.achievements = {};
+
+console.log("✅ Correcciones aplicadas");
 
 // =============================================
 // ⚙️ CONFIGURACIÓN PERSONALIZABLE — EDITA AQUÍ
@@ -24,60 +46,6 @@ const MAY_WORDS_SMALL = [
   'May','Amor','May 🌸','💕 May','May ✨','Beso','May ❤️',
   'Mi reina May','May 💗','💖 May','Siempre May','May 🎀',
 ];
-// =============================================
-// 🎁 INICIALIZACIÓN DEL REGALO (CORREGIDO)
-// =============================================
-(function iniciarRegalo() {
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', iniciarRegalo);
-        return;
-    }
-    
-    const giftBox = document.getElementById('giftBox');
-    const giftLabel = document.getElementById('giftClickLabel');
-    const giftBar = document.getElementById('giftProgressBar');
-    const giftScreen = document.getElementById('giftScreen');
-    const mainApp = document.getElementById('mainApp');
-    
-    if (!giftBox) {
-        console.error("giftBox no encontrado");
-        return;
-    }
-    
-    if (localStorage.getItem('giftOpened') === 'yes') {
-        if (giftScreen) giftScreen.style.display = 'none';
-        if (mainApp) mainApp.classList.remove('hidden');
-        return;
-    }
-    
-    let clics = 0;
-    const TOTAL = 20;
-    
-    function handleClick(e) {
-        e.stopPropagation();
-        clics++;
-        
-        if (giftLabel) giftLabel.textContent = `${clics} / ${TOTAL} clics 💗`;
-        if (giftBar) giftBar.style.width = (clics / TOTAL * 100) + '%';
-        
-        giftBox.style.transform = 'scale(0.96)';
-        setTimeout(() => giftBox.style.transform = '', 120);
-        
-        if (clics >= TOTAL) {
-            if (giftScreen) giftScreen.classList.add('closing');
-            setTimeout(() => {
-                if (giftScreen) giftScreen.style.display = 'none';
-                if (mainApp) mainApp.classList.remove('hidden');
-                localStorage.setItem('giftOpened', 'yes');
-                launchConfetti(150);
-            }, 800);
-        }
-    }
-    
-    giftBox.addEventListener('click', handleClick);
-    giftBox.addEventListener('touchstart', handleClick);
-    console.log("✅ Regalo inicializado");
-})();
 
 // =============================================
 // 📸 SECCIÓN 1: CARTA ROMÁNTICA (CARRUSEL)

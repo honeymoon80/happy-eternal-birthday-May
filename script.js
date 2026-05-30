@@ -1,58 +1,4 @@
-// =============================================
-// CORRECCIÓN DEL REGALO - PONER AL INICIO
-// =============================================
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("🚀 DOM Listo - Inicializando regalo");
-    
-    const giftBox = document.getElementById('giftBox');
-    const giftLabel = document.getElementById('giftClickLabel');
-    const giftBar = document.getElementById('giftProgressBar');
-    const giftScreen = document.getElementById('giftScreen');
-    const mainApp = document.getElementById('mainApp');
-    
-    if (!giftBox) {
-        console.error("❌ giftBox NO encontrado!");
-        return;
-    }
-    
-    console.log("✅ giftBox encontrado");
-    
-    let clics = 0;
-    const CLICS_NEC = 20;
-    
-    function abrirRegalo() {
-        console.log("🎉 Abriendo regalo");
-        launchConfetti(150);
-        if (giftScreen) giftScreen.classList.add('closing');
-        setTimeout(() => {
-            if (giftScreen) giftScreen.style.display = 'none';
-            if (mainApp) mainApp.classList.remove('hidden');
-            localStorage.setItem('giftOpened', 'yes');
-            // Inicializar música u otras cosas aquí
-        }, 800);
-    }
-    
-    function hacerClic(e) {
-        e.stopPropagation();
-        clics++;
-        console.log(`Clic ${clics}/${CLICS_NEC}`);
-        
-        if (giftLabel) giftLabel.textContent = `${clics} / ${CLICS_NEC} clics 💗`;
-        if (giftBar) giftBar.style.width = (clics / CLICS_NEC * 100) + '%';
-        
-        // Animación
-        giftBox.style.transform = 'scale(0.96)';
-        setTimeout(() => giftBox.style.transform = '', 120);
-        
-        if (clics >= CLICS_NEC) {
-            abrirRegalo();
-        }
-    }
-    
-    giftBox.addEventListener('click', hacerClic);
-    giftBox.addEventListener('touchstart', hacerClic);
-});
-/* =============================================
+/* ============================================
    SCRIPT.JS - Página Romántica de Cumpleaños para May
    ============================================= */
 'use strict';
@@ -78,6 +24,60 @@ const MAY_WORDS_SMALL = [
   'May','Amor','May 🌸','💕 May','May ✨','Beso','May ❤️',
   'Mi reina May','May 💗','💖 May','Siempre May','May 🎀',
 ];
+// =============================================
+// 🎁 INICIALIZACIÓN DEL REGALO (CORREGIDO)
+// =============================================
+(function iniciarRegalo() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', iniciarRegalo);
+        return;
+    }
+    
+    const giftBox = document.getElementById('giftBox');
+    const giftLabel = document.getElementById('giftClickLabel');
+    const giftBar = document.getElementById('giftProgressBar');
+    const giftScreen = document.getElementById('giftScreen');
+    const mainApp = document.getElementById('mainApp');
+    
+    if (!giftBox) {
+        console.error("giftBox no encontrado");
+        return;
+    }
+    
+    if (localStorage.getItem('giftOpened') === 'yes') {
+        if (giftScreen) giftScreen.style.display = 'none';
+        if (mainApp) mainApp.classList.remove('hidden');
+        return;
+    }
+    
+    let clics = 0;
+    const TOTAL = 20;
+    
+    function handleClick(e) {
+        e.stopPropagation();
+        clics++;
+        
+        if (giftLabel) giftLabel.textContent = `${clics} / ${TOTAL} clics 💗`;
+        if (giftBar) giftBar.style.width = (clics / TOTAL * 100) + '%';
+        
+        giftBox.style.transform = 'scale(0.96)';
+        setTimeout(() => giftBox.style.transform = '', 120);
+        
+        if (clics >= TOTAL) {
+            if (giftScreen) giftScreen.classList.add('closing');
+            setTimeout(() => {
+                if (giftScreen) giftScreen.style.display = 'none';
+                if (mainApp) mainApp.classList.remove('hidden');
+                localStorage.setItem('giftOpened', 'yes');
+                launchConfetti(150);
+            }, 800);
+        }
+    }
+    
+    giftBox.addEventListener('click', handleClick);
+    giftBox.addEventListener('touchstart', handleClick);
+    console.log("✅ Regalo inicializado");
+})();
 
 // =============================================
 // 📸 SECCIÓN 1: CARTA ROMÁNTICA (CARRUSEL)
